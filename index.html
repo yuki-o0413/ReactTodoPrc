@@ -19,8 +19,12 @@
             return !todo.isDone;
           });
 
+          //前提として、onClick には関数を渡す必要がある
+          // onClick={() => props.purge()}としても
+          // onClick={props.purge}としてもOK
           return(
             <h1>
+              <button onClick={props.purge}>Purge</button>
               My Todos
               <span>{remaining.length}/{props.todos.length}</span>
             </h1>
@@ -96,6 +100,21 @@
             this.deleteTodo = this.deleteTodo.bind(this);
             this.updateItem = this.updateItem.bind(this);
             this.addTodo = this.addTodo.bind(this);
+            this.purge = this.purge.bind(this); //thisのバインドをしておく
+          }
+
+          purge(){
+            if (!confirm('are you sure?')){
+              return;
+            }
+            //まだチェックしていない Todo だけを集めて setState() をしてあげれば OK かと思うので、 filter() を使ってあげる
+            //setState() をしてあげればいい
+            const todos = this.state.todos.filter(todo =>{
+              return !todo.isDone;
+            });
+            this.setState({
+              todos: todos
+            });
           }
 
           addTodo(e) {
@@ -161,6 +180,7 @@
               <div className="container">
                 <TodoHeader
                   todos={this.state.todos}
+                  purge={this.purge}
                 />
                 <TodoList
                   todos={this.state.todos}

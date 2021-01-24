@@ -45,6 +45,10 @@ h1 > span {
   margin-left: 5px;
 }
 
+h1 > button{
+  float: right; /* ボタンを右寄せに */
+}
+
 .done {
   text-decoration: line-through;
   color: #ccc;
