@@ -19,9 +19,6 @@
             return !todo.isDone;
           });
 
-          //前提として、onClick には関数を渡す必要がある
-          // onClick={() => props.purge()}としても
-          // onClick={props.purge}としてもOK
           return(
             <h1>
               <button onClick={props.purge}>Purge</button>
@@ -30,10 +27,10 @@
             </h1>
           )
         }
-
+        // TodoList の TodoItem コンポーネントの方に key を設定しているので、こちらの li の方に key は不要
         function TodoItem(props) {
           return (
-            <li key={props.todo.id}>
+            <li>
               <label>
                 <input
                   type="checkbox"
@@ -107,8 +104,6 @@
             if (!confirm('are you sure?')){
               return;
             }
-            //まだチェックしていない Todo だけを集めて setState() をしてあげれば OK かと思うので、 filter() を使ってあげる
-            //setState() をしてあげればいい
             const todos = this.state.todos.filter(todo =>{
               return !todo.isDone;
             });
@@ -174,6 +169,22 @@
               item: e.target.value,
             });
           }
+        //ブラウザをリロードすると、このようにデータがリセットされてしまうので Local Storage を使って永続化してあげましょう。
+        //今回データを保存したいのは、コンポーネントが更新されるタイミングなので App コンポーネントの中で、 componentDidUpdate() という特殊なメソッドに実装
+        //localStorage に setItem() してあげる
+        // キーは todos としてあげて state の値を保持したいのですが、 JSON にしてあげれば OK
+        // ブラウザのApplication の Local Storage の file を見れば良い⇨todos というキーでちゃんと値が保持されている
+        componentDidUpdate(){
+          localStorage.setItem('todos', JSON.stringify(this.state.todos));
+        }
+        // 後はデータの読み込みですが、コンポーネントがマウントされる際に Local Storage に読み込んであげれば OK
+        // componentDidMount() という特殊なメソッドが使えるのでそちらに書いていく
+        // 上手くいかなかったときは空配列にしてあげる
+        componentDidMount(){
+          this.setState({
+            todos: JSON.parse(localStorage.getItem('todos')) || []
+          });
+        }
 
           render() {
             return (
